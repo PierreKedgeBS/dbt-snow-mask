@@ -60,7 +60,7 @@
                         {% if masking_policy_db|upper ~ '.' ~ masking_policy_schema|upper ~ '.' ~ masking_policy_name|upper == masking_policy_in_db %}
                             {{ log(modules.datetime.datetime.now().strftime("%H:%M:%S") ~ " | " ~ operation_type ~ "ing masking policy to model  : " ~ masking_policy_db|upper ~ '.' ~ masking_policy_schema|upper ~ '.' ~ masking_policy_name|upper ~ " on " ~ database ~ '.' ~ schema ~ '.' ~ alias ~ '.' ~ column ~ ' [force = ' ~ var('use_force_applying_masking_policy','False') ~ ']', info=True) }}
                             {% set query %}
-                            alter {{materialization}} {{database}}.{{schema}}.{{alias}}
+                            alter {{materialization}} "{{database}}"."{{schema}}"."{{alias}}"
                             modify column "{{column}}"
                             set masking policy {{masking_policy_db}}.{{masking_policy_schema}}.{{masking_policy_name}} {% if conditional_columns | length > 0 %}using ({{column}}, {{conditional_columns|join(', ')}}){% endif %} {% if var('use_force_applying_masking_policy','False')|upper in ['TRUE','YES'] %} force {% endif %};
                             {% endset %}
@@ -100,7 +100,7 @@
                     {% if masking_policy_name is not none %}
                         {{ log(modules.datetime.datetime.now().strftime("%H:%M:%S") ~ " | " ~ operation_type ~ "ing masking policy to model  : " ~ database|upper ~ '.' ~ schema|upper ~ '.' ~ masking_policy_name|upper ~ " on " ~ database ~ '.' ~ schema ~ '.' ~ alias ~ '.' ~ column, info=True) }}
                         {% set query %}
-                            alter {{materialization}}  {{database}}.{{schema}}.{{alias}} modify column  "{{column}}" unset masking policy
+                            alter {{materialization}}  "{{database}}"."{{schema}}"."{{alias}}" modify column  "{{column}}" unset masking policy
                         {% endset %}
                         {% do run_query(query) %}
                     {% endif %}
